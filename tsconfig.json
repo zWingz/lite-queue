@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": false,
+    "target": "es2017",
+    "declaration": true,
+    "outDir": "dist",
+    "types": ["jest", "node"],
+    "lib": [
+      "es7",
+      "es2015"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
