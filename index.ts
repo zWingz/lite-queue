@@ -3,7 +3,7 @@ function isPromise(obj) {
   return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
 }
 
-export class Queue<T = any> {
+class Queue<T = any> {
   private _queue: { fnc: Function; res: (value: any) => any; rej: (value: any) => any }[] = []
   private _doing = false
   private _do() {
@@ -47,3 +47,8 @@ export class Queue<T = any> {
     })
   }
 }
+
+export {
+  Queue
+}
+export default Queue
