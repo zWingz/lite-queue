@@ -10,6 +10,7 @@
     "lint": "tslint --fix --format codeFrame --project .",
     "pub": "yarn lint && yarn build && yarn publish"
   },
+  "keywords": ["queue"],
   "repository": {
     "type": "git",
     "url": "https://github.com/zwingz/lite-queue"
