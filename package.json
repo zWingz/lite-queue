@@ -1,6 +1,6 @@
 {
   "name": "lite-queue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -10,7 +10,9 @@
     "lint": "tslint --fix --format codeFrame --project .",
     "pub": "yarn lint && yarn build && yarn publish"
   },
-  "keywords": ["queue"],
+  "keywords": [
+    "queue"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/zwingz/lite-queue"
