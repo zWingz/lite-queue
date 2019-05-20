@@ -1,5 +1,8 @@
 ## lite-queue
 
+[![CircleCI](https://circleci.com/gh/zWingz/lite-queue.svg?style=svg)](https://circleci.com/gh/zWingz/lite-queue)
+[![codecov](https://codecov.io/gh/zWingz/lite-queue/branch/master/graph/badge.svg)](https://codecov.io/gh/zWingz/lite-queue)
+
 call `function` in queue
 
 ### Usage
@@ -25,4 +28,4 @@ q.exec(() => {
 })
 ```
 
-### 
+###
