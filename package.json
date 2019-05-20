@@ -2,10 +2,25 @@
   "name": "lite-queue",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p .",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint --fix --format codeFrame --project .",
+    "pub": "yarn lint && yarn build && yarn publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zwingz/lite-queue"
+  },
+  "bugs": {
+    "url": "https://github.com/zwingz/lite-queue/issues"
+  },
+  "homepage": "https://github.com/zwingz/lite-queue",
+  "author": {
+    "name": "zwing",
+    "email": "zhengzwing@gmail.com"
   },
   "devDependencies": {
     "@types/faker": "^4.1.5",
@@ -15,6 +30,7 @@
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "tslint": "^5.16.0",
+    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.4.5"
   },
   "jest": {

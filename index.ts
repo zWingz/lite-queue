@@ -1,39 +1,44 @@
-
-function isPromise(obj) {
-  return !!obj && (typeof obj === 'object' || typeof obj === 'function') && typeof obj.then === 'function';
+function isPromise (obj) {
+  return (
+    !!obj &&
+    (typeof obj === 'object' || typeof obj === 'function') &&
+    typeof obj.then === 'function'
+  )
 }
 
 class Queue<T = any> {
-  private _queue: { fnc: Function; res: (value: any) => any; rej: (value: any) => any }[] = []
+  private _queue: {
+    fnc: Function
+    res: (value: any) => any
+    rej: (value: any) => any
+  }[] = []
   private _doing = false
-  private _do() {
+  private _do () {
     this._doing = true
     const item = this._queue.shift()
-    if(!item) {
+    if (!item) {
       this._doing = false
       return
     }
-    const { fnc, res, rej} = item
+    const { fnc, res, rej } = item
     try {
       const result = fnc()
       const is = isPromise(result)
       if (is) {
-        (result as Promise<any>).then(
-          res, rej
-        ).finally(() => this._do())
+        (result as Promise<any>).then(res, rej).finally(() => this._do())
       } else {
         res(result)
         this._do()
       }
-    } catch(e) {
+    } catch (e) {
       rej(e)
       this._do()
     }
   }
-  constructor() {
+  constructor () {
     this._do = this._do.bind(this)
   }
-  public exec<E = T>(fnc: Function): Promise<E> {
+  public exec<E = T> (fnc: Function): Promise<E> {
     return new Promise((res, rej) => {
       this._queue.push({
         fnc,
@@ -48,7 +53,5 @@ class Queue<T = any> {
   }
 }
 
-export {
-  Queue
-}
+export { Queue }
 export default Queue
