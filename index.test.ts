@@ -4,7 +4,7 @@ function randomDelay(value, isThrow = false) {
   return new Promise((res, rej) => {
     const delay = (Math.random() * 2 + 0.5) * 50
     setTimeout(() => {
-      if(isThrow) {
+      if (isThrow) {
         rej(value)
       } else {
         res(value)
@@ -15,7 +15,7 @@ function randomDelay(value, isThrow = false) {
 
 function generateFake(len) {
   const arr = []
-  for(let i = 0; i < len; i ++) {
+  for (let i = 0; i < len; i++) {
     arr.push(Faker.random.number(100))
   }
   return arr
@@ -23,8 +23,8 @@ function generateFake(len) {
 
 function generatePromiseAll(arr, fnc, format?) {
   const all = []
-  const {length: len} = arr
-  for(let i = 0; i < len; i ++) {
+  const { length: len } = arr
+  for (let i = 0; i < len; i++) {
     let val = arr[i]
     val = format ? format(val, i) : val
     all.push(fnc(val))
@@ -38,7 +38,7 @@ function expectError(e: Error, message) {
 }
 
 describe('test queue', () => {
-  it('test return async', (done) => {
+  it('test return async', done => {
     const queue = new Queue()
     const len = 10
     const arr = generateFake(len)
@@ -50,12 +50,12 @@ describe('test queue', () => {
       return d
     }
     const all = generatePromiseAll(arr, doSome)
-    Promise.all(all).then((args) => {
+    Promise.all(all).then(args => {
       expect(args).toEqual(arr)
       done()
     })
   })
-  it('test return sync', (done) => {
+  it('test return sync', done => {
     const queue = new Queue()
     const len = 10
     const arr = generateFake(len)
@@ -67,63 +67,90 @@ describe('test queue', () => {
       return d
     }
     const all = generatePromiseAll(arr, doSome)
-    Promise.all(all).then((args) => {
+    Promise.all(all).then(args => {
       expect(args).toEqual(arr.map(each => 10 * each))
       done()
     })
   })
-  it('test throw error async', (done) => {
+  it('test throw error async', done => {
     const queue = new Queue()
     const len = 10
     const arr = generateFake(len)
     async function doSome(val: number, isThrow) {
-      return queue.exec(() => {
-        if(isThrow) {
-          throw new Error(val + '')
-        }
-        return val
-      }).then(d => {
-        expect(d).toEqual(val)
-        return d
-      }).catch(e => {
-        expectError(e, val)
-        return +e.message
-      })
+      return queue
+        .exec(() => {
+          if (isThrow) {
+            throw new Error(val + '')
+          }
+          return val
+        })
+        .then(d => {
+          expect(d).toEqual(val)
+          return d
+        })
+        .catch(e => {
+          expectError(e, val)
+          return +e.message
+        })
     }
     const all = []
-    for(let i = 0; i < len; i ++) {
+    for (let i = 0; i < len; i++) {
       all.push(doSome(arr[i], i % 2 === 0))
     }
-    Promise.all(all).then((args) => {
+    Promise.all(all).then(args => {
       expect(args).toEqual(arr.map(each => each))
       done()
     })
   })
-  it('test throw error sync', (done) => {
+  it('test throw error sync', done => {
     const queue = new Queue()
     const len = 10
     const arr = generateFake(len)
     async function doSome(arg: number, isThrow) {
-      return queue.exec(() => {
-          if(isThrow) {
+      return queue
+        .exec(() => {
+          if (isThrow) {
             throw new Error(arg + '')
           }
           return arg
-        }).then(d => {
+        })
+        .then(d => {
           expect(d).toEqual(arg)
           return d
-        }).catch(e => {
+        })
+        .catch(e => {
           expect(isThrow).toBeTruthy()
           expectError(e, arg)
           return +e.message
         })
     }
     const all = []
-    for(let i = 0; i < len; i ++) {
+    for (let i = 0; i < len; i++) {
       all.push(doSome(arr[i], i % 2 === 0))
     }
-    Promise.all(all).then((args) => {
+    Promise.all(all).then(args => {
       expect(args).toEqual(arr.map(each => each))
+      done()
+    })
+  })
+  it('test done callback', done => {
+    const queue = new Queue()
+    const len = 10
+    const arr = generateFake(len)
+    arr.forEach(each => {
+      queue.exec(
+        () => {
+          return Promise.resolve(each)
+        },
+        {
+          useDone: true
+        }
+      )
+    })
+    queue.done().then((arg) => {
+      console.log(arg, arr)
+      expect(arg).toEqual(arr)
+      expect((queue as any)._done).toHaveLength(0)
       done()
     })
   })

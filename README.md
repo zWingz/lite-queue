@@ -28,4 +28,16 @@ q.exec(() => {
 })
 ```
 
-###
+### with done callback
+
+```javascript
+import Queue from 'lite-queue'
+const q = new Queue()
+const opt = { useDone: true }
+q.exec(() => 1, opt)
+q.exec(() => 2, opt)
+q.exec(() => 3, opt)
+q.done().then(values => {
+  console.log(values) // [1,2,3]
+})
+```

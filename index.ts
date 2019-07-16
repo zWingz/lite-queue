@@ -1,4 +1,4 @@
-function isPromise (obj) {
+function isPromise(obj) {
   return (
     !!obj &&
     (typeof obj === 'object' || typeof obj === 'function') &&
@@ -6,14 +6,19 @@ function isPromise (obj) {
   )
 }
 
+type ExecOptions = {
+  useDone?: boolean
+}
+
 class Queue<T = any> {
-  private _queue: {
+  private _queue: ({
     fnc: Function
     res: (value: any) => any
     rej: (value: any) => any
-  }[] = []
+  })[] = []
   private _doing = false
-  private _do () {
+  private _done = []
+  private _do() {
     this._doing = true
     const item = this._queue.shift()
     if (!item) {
@@ -24,32 +29,43 @@ class Queue<T = any> {
     try {
       const result = fnc()
       const is = isPromise(result)
-      if (is) {
+      if(is) {
         (result as Promise<any>).then(res, rej).finally(() => this._do())
       } else {
         res(result)
         this._do()
       }
-    } catch (e) {
+    } catch(e) {
       rej(e)
       this._do()
     }
   }
-  constructor () {
+  constructor() {
     this._do = this._do.bind(this)
   }
-  public exec<E = T> (fnc: Function): Promise<E> {
-    return new Promise((res, rej) => {
+  public exec<E = T>(fnc: Function, options: ExecOptions = {}): Promise<E> {
+    const ret = new Promise<E>((res, rej) => {
       this._queue.push({
         fnc,
         res,
-        rej
+        rej,
+        ...options
       })
       if (this._doing) {
         return
       }
       this._do()
     })
+    options.useDone && this._done.push(ret)
+    return ret
+  }
+  public done<E = T>(): Promise<E[]> {
+    const ret = Promise.all([].concat(this._done))
+    this.clearDone()
+    return ret
+  }
+  public clearDone() {
+    this._done = []
   }
 }
 
